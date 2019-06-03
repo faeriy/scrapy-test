@@ -11,7 +11,6 @@ class DetailsSpider(scrapy.Spider):
     name = 'details'
 
     _STARTUPS_COUNT = 250
-    # _STARTUPS_COUNT = 10
     _CSV_FILENAME = 'urls.csv'
 
     allowed_domains = ['e27.co']
@@ -26,8 +25,6 @@ class DetailsSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse_profile)
 
     def parse_profile(self, response):
-        # data = json.loads(response.body.decode())
-        # self.log(data)
         selector = scrapy.Selector(response, type='html')
 
         #  Preparing description list to write into .csv file.
@@ -40,16 +37,9 @@ class DetailsSpider(scrapy.Spider):
         desc_short = selector.xpath("//div[@class='row']/div[@class='col-md-10']/div[@class='row']/"
                                                 "div[@class='col-md-12']/div/text()").extract_first() or None
 
-        # desc += ' pleskovych@gmail.com, r.davydjuk@rambler.ru mememe@mail.ru'
-        # desc_short += ' pleskovych@gmail.com, r.davydjuk@rambler.ru mememe@mail.ru'
-
         phones = re.findall(r'\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4}',
                             desc + ' ' + desc_short) or None
         e_mails = re.findall(r'[\w\.-]+@[\w\.-]+', desc + ' ' + desc_short) or None
-
-        # tags = selector.xpath('//div[@class="row"]/div[@class="col-md-10"]/div[@class="row"]/'
-        #                       'div[@class=col-md-12]/div[3]/span/a/text()').extract() or None
-
         tags = selector.xpath('//div[@class="row"]/div[@class="col-md-10"]/div[@class="row"]/div['
                        '@class="col-md-12"]/div[3]/span/a/text()').extract()
         if tags:
@@ -66,7 +56,7 @@ class DetailsSpider(scrapy.Spider):
                 "//div[@class='row']/div[@class='col-md-12']/p/span/text()").extract_first() or None,
             'founders': selector.xpath(
                 "//div[@class='desc']/span[@class='item-label bold']/a/text()").extract() or None,
-            # 'employee_range': selector.css('').extract_first() or None,
+            'employee_range': None,
             'urls': selector.xpath("//div[@class='row']/div[@class='col-md-12']/div[@class='engage']/div[@class='row']"
                                    "/div[@class='col-md-5 socials pdt text-right ']/a/@href").extract() or None,
             'emails': e_mails or None,
