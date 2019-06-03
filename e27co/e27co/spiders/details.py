@@ -35,13 +35,13 @@ class DetailsSpider(scrapy.Spider):
             desc += paragraph.strip()
 
         desc_short = selector.xpath("//div[@class='row']/div[@class='col-md-10']/div[@class='row']/"
-                                                "div[@class='col-md-12']/div/text()").extract_first() or None
+                                    "div[@class='col-md-12']/div/text()").extract_first() or None
 
         phones = re.findall(r'\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4}',
                             desc + ' ' + desc_short) or None
         e_mails = re.findall(r'[\w\.-]+@[\w\.-]+', desc + ' ' + desc_short) or None
         tags = selector.xpath('//div[@class="row"]/div[@class="col-md-10"]/div[@class="row"]/div['
-                       '@class="col-md-12"]/div[3]/span/a/text()').extract()
+                              '@class="col-md-12"]/div[3]/span/a/text()').extract()
         if tags:
             print('tags: ' + ', '.join(tags))
 
